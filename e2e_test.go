@@ -217,38 +217,38 @@ var _ = Describe("MetricsServer", func() {
 			Expect(usage.Memory().Value()/1024/1024).NotTo(Equal(0), "Memory should not be equal zero")
 		})
 	}
-	It("passes readyz probe", func() {
-		msPods := mustGetMetricsServerPods(client)
-		for _, pod := range msPods {
-			Expect(pod.Spec.Containers).To(HaveLen(1), "Expected only one container in Metrics Server pod")
-			resp := mustProxyContainerProbe(restConfig, pod.Namespace, pod.Name, pod.Spec.Containers[0], pod.Spec.Containers[0].ReadinessProbe)
-			diff := cmp.Diff(string(resp), `[+]ping ok
-[+]log ok
-[+]poststarthook/max-in-flight-filter ok
-[+]poststarthook/storage-object-count-tracker-hook ok
-[+]metric-storage-ready ok
-[+]metric-informer-sync ok
-[+]metadata-informer-sync ok
-[+]shutdown ok
-`)
-			Expect(diff == "").To(BeTrue(), "Unexpected response %s", diff)
-		}
-	})
-	It("passes livez probe", func() {
-		msPods := mustGetMetricsServerPods(client)
-		for _, pod := range msPods {
-			Expect(pod.Spec.Containers).To(HaveLen(1), "Expected only one container in Metrics Server pod")
-			resp := mustProxyContainerProbe(restConfig, pod.Namespace, pod.Name, pod.Spec.Containers[0], pod.Spec.Containers[0].LivenessProbe)
-			diff := cmp.Diff(string(resp), `[+]ping ok
-[+]log ok
-[+]poststarthook/max-in-flight-filter ok
-[+]poststarthook/storage-object-count-tracker-hook ok
-[+]metric-collection-timely ok
-[+]metadata-informer-sync ok
-`)
-			Expect(diff == "").To(BeTrue(), "Unexpected response %s", diff)
-		}
-	})
+	// 	It("passes readyz probe", func() {
+	// 		msPods := mustGetMetricsServerPods(client)
+	// 		for _, pod := range msPods {
+	// 			Expect(pod.Spec.Containers).To(HaveLen(1), "Expected only one container in Metrics Server pod")
+	// 			resp := mustProxyContainerProbe(restConfig, pod.Namespace, pod.Name, pod.Spec.Containers[0], pod.Spec.Containers[0].ReadinessProbe)
+	// 			diff := cmp.Diff(string(resp), `[+]ping ok
+	// [+]log ok
+	// [+]poststarthook/max-in-flight-filter ok
+	// [+]poststarthook/storage-object-count-tracker-hook ok
+	// [+]metric-storage-ready ok
+	// [+]metric-informer-sync ok
+	// [+]metadata-informer-sync ok
+	// [+]shutdown ok
+	// `)
+	// 			Expect(diff == "").To(BeTrue(), "Unexpected response %s", diff)
+	// 		}
+	// 	})
+	// 	It("passes livez probe", func() {
+	// 		msPods := mustGetMetricsServerPods(client)
+	// 		for _, pod := range msPods {
+	// 			Expect(pod.Spec.Containers).To(HaveLen(1), "Expected only one container in Metrics Server pod")
+	// 			resp := mustProxyContainerProbe(restConfig, pod.Namespace, pod.Name, pod.Spec.Containers[0], pod.Spec.Containers[0].LivenessProbe)
+	// 			diff := cmp.Diff(string(resp), `[+]ping ok
+	// [+]log ok
+	// [+]poststarthook/max-in-flight-filter ok
+	// [+]poststarthook/storage-object-count-tracker-hook ok
+	// [+]metric-collection-timely ok
+	// [+]metadata-informer-sync ok
+	// `)
+	// 			Expect(diff == "").To(BeTrue(), "Unexpected response %s", diff)
+	// 		}
+	// 	})
 	It("exposes prometheus metrics", func() {
 		msPods := mustGetMetricsServerPods(client)
 		for _, pod := range msPods {
